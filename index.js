@@ -1,39 +1,38 @@
 'use strict';
 
-var RollingSpider = require('rolling-spider');
-var temporal = require('temporal');
-var rollingSpider = new RollingSpider({
+var Drone = require('rolling-spider');
+var d = new Drone({
   uuid: "Travis_070557",
   logger: console.log
 });
 
-rollingSpider.connect(function (connectError) {
+d.connect(function (connectError) {
   if (connectError) {
     console.log("Connect Error!");
     return;
   }
 
-  rollingSpider.setup(function (setupError) {
+  d.setup(function (setupError) {
     if (setupError) {
       console.log("Setup Error!");
       return;
     }
 
-    rollingSpider.flatTrim();
-    rollingSpider.startPing();
-    rollingSpider.flatTrim();
+    d.flatTrim();
+    d.startPing();
+    d.flatTrim();
 
-    var r = rollingSpider;
-
-    r.takeoff(function() {
-      r.up({
-        speed: 20,
+    d.takeoff(function() {
+      d.up({
+        speed: 10,
         steps: 20
       }, function() {
-        r.backFlip(function() {
-          r.land(function() {
-            process.exit(0);
-          });
+        d.backFlip(function() {
+          setTimeout(function() {
+            d.land(function() {
+              process.exit(0);
+            });
+          }, 3000);
         });
       });
     });
