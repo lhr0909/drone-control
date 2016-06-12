@@ -27,12 +27,17 @@ d.connect(function (connectError) {
         speed: 10,
         steps: 20
       }, function() {
-        d.backFlip(function() {
-          setTimeout(function() {
-            d.land(function() {
-              process.exit(0);
-            });
-          }, 3000);
+        d.forward({
+          speed: 20,
+          steps: 20
+        }, function() {
+          d.backFlip(function() {
+            setTimeout(function() {
+              d.land(function() {
+                process.exit(0);
+              });
+            }, 3000);
+          });
         });
       });
     });
