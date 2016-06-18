@@ -24,21 +24,25 @@ d.connect(function (connectError) {
 
     d.takeoff(function() {
       d.up({
-        speed: 10,
-        steps: 20
+        speed: 30,
+        steps: 30
       }, function() {
-        d.forward({
-          speed: 20,
-          steps: 20
-        }, function() {
-          d.backFlip(function() {
-            setTimeout(function() {
-              d.land(function() {
-                process.exit(0);
+        setTimeout(function() {
+          d.forward({
+            speed: 40,
+            steps: 50
+          }, function() {
+            setTimeout(function () {
+              d.backFlip(function() {
+                setTimeout(function() {
+                  d.land(function() {
+                    process.exit(0);
+                  });
+                }, 3000);
               });
-            }, 3000);
+            }, 2000);
           });
-        });
+        }, 2000);
       });
     });
   });
