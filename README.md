@@ -14,3 +14,12 @@ Needs to install OpenCV (and its dependency for it to build and link, such as li
     brew install ffmpeg
 
 This should pull most of the dependencies and build recursively. Then you will need to run `npm install` to get the nodejs dependencies pulled down as well.
+
+# References
+
+* [node-ar-drone](https://github.com/felixge/node-ar-drone)
+* [node-rolling-spider](https://github.com/voodootikigod/node-rolling-spider)
+* [node-opencv](https://github.com/peterbraden/node-opencv)
+* [ardrone-autonomy](https://github.com/eschnou/ardrone-autonomy)
+  * http://eschnou.github.io/ardrone-autonomy/
+  * www.slideshare.net/eschnou/20130807-advanced-programming-with-nodecopter
