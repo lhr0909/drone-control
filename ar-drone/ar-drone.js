@@ -14,11 +14,11 @@ var IMG_CENTER = {
 };
 
 var FACE_SIZE = 80;
-var FACE_ERROR = 5;
+var FACE_ERROR = 20;
 
-var X_SCALE = 0.005;
-var Y_SCALE = 0.005;
-var Z_SCALE = 0.005;
+var X_SCALE = 0.002;
+var Y_SCALE = 0.002;
+var Z_SCALE = 0.002;
 
 var LANDING = false;
 
@@ -62,34 +62,19 @@ function calcFaceDiff(face) {
   return (faceWidthDiff + faceHeightDiff) / 2;
 }
 
-function goByFace(face, currentState, count) {
+function goByFace(face) {
   var faceSizeDiff = calcFaceDiff(face);
   var faceCenterDelta = calcDeltaPoint(IMG_CENTER, face.center);
 
-  var newState = Object.assign({}, currentState, {
-    x: currentState.x + faceSizeDiff * X_SCALE,
-    y: currentState.y + faceCenterDelta.y * Y_SCALE,
-    z: currentState.z + faceCenterDelta.z * Z_SCALE
+  return Object.assign({}, {
+    x: faceSizeDiff,
+    y: faceCenterDelta.y,
+    z: faceCenterDelta.z
   });
-
-  if (count) {
-    var payload = {
-      face: face,
-      state: currentState,
-      x: faceSizeDiff,
-      y: faceCenterDelta.y,
-      z: faceCenterDelta.z,
-      count: count
-    };
-    console.log(payload);
-    jsonfile.writeFile('./raw_data/drone' + count + '.json', payload);
-  }
-
-  return newState;
 }
 
 var client = arDrone.createClient({
-  frameRate: 2
+  frameRate: 15
 });
 
 var controller = new arController(client);
@@ -102,11 +87,11 @@ client.config('video:video_channel', 0);
 
 var sequence = function() {
   controller.zero();
-  controller.hover();
+  // controller.hover();
 
   setTimeout(function() {
     landDrone(client);
-  }, 10000);
+  }, 1000);
 
   pngStream.pipe(cvImageStream);
 };
@@ -132,20 +117,62 @@ cvImageStream.on('data', function(mat) {
       var biggestFace = getBiggestFace(matches);
 
       if (!LANDING) {
-        var s = goByFace(biggestFace, controller.state(), count);
-        controller.go(s);
+        var direction = goByFace(biggestFace);
+        // console.log(direction);
+        if (direction.z > FACE_ERROR) {
+          client.down(0.5);
+          console.log('down');
+        } else if (direction.z < -FACE_ERROR) {
+          console.log('up');
+          client.up(0.5);
+        } else {
+          client.stop();
+          console.log('stop');
+        }
 
-        mat.rectangle([face.x, face.y], [face.width, face.height], [0, 255, 0], 2);
+        if (direction.y > FACE_ERROR) {
+          console.log('right');
+          // client.right(0.5);
+          client.clockwise(0.5);
+        } else if (direction.y < -FACE_ERROR) {
+          console.log('left');
+          // client.left(0.5);
+          client.counterClockwise(0.5);
+        } else {
+          console.log('stop');
+          client.stop();
+        }
+        //
+        // if (direction.x > FACE_ERROR) {
+        //   console.log('front');
+        //   client.front(0.5);
+        // } else if (direction.x < -FACE_ERROR) {
+        //   console.log('back');
+        //   client.back(0.5);
+        // } else {
+        //   console.log('stop');
+        //   client.stop();
+        // }
+
+        mat.rectangle(
+          [biggestFace.x, biggestFace.y],
+          [biggestFace.width, biggestFace.height],
+          [0, 255, 0], 2
+        );
         mat.rectangle(
           [IMG_CENTER.x - FACE_SIZE / 2, IMG_CENTER.y - FACE_SIZE / 2],
           [FACE_SIZE, FACE_SIZE],
           [0, 0, 255], 2
         );
 
-        mat.save('./raw_data/drone' + (count++) + '.png');
+        // mat.save('./raw_data/drone' + (count++) + '.png');
+        mat.save('./drone.png');
       } else {
         goByFace(biggestFace, controller.state());
       }
+    } else {
+      console.log('no match');
+      client.stop();
     }
   });
 });

@@ -19,6 +19,7 @@
   "dependencies": {
     "ar-drone": "^0.3.3",
     "async": "^1.5.2",
+    "chokidar": "^1.6.0",
     "jsonfile": "^2.3.1",
     "opencv": "^5.0.0",
     "rolling-spider": "^1.5.2",
