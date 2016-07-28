@@ -5,7 +5,7 @@ var fs = require('fs');
 
 var Drone = require('rolling-spider');
 var d = new Drone({
-  uuid: "Travis_070557",
+  // uuid: "Travis_070557",
   logger: console.log
 });
 
@@ -55,34 +55,60 @@ watcher.on('all', function(event, path) {
     console.log("landing");
     d.land();
   }
-  if (data.indexOf("高") > -1) {
+  if (data.indexOf("上") > -1) {
     console.log("flying up");
     d.up({
-      speed: 30,
-      steps: 15
+      speed: 40,
+      steps: 20
     });
   }
-  if (data.indexOf("低") > -1) {
+  if (data.indexOf("下") > -1) {
     console.log("flying down");
     d.down({
-      speed: 30,
-      steps: 15
+      speed: 40,
+      steps: 20
     });
   }
   if (data.indexOf("前") > -1) {
     console.log("flying forward");
     d.forward({
-      speed: 30,
-      steps: 15
+      speed: 40,
+      steps: 20
     });
   }
   if (data.indexOf("后") > -1) {
     console.log("flying backward");
     d.backward({
-      speed: 30,
-      steps: 15
+      speed: 40,
+      steps: 20
+    });
+  }
+  if (data.indexOf("左") > -1) {
+    console.log("flying backward");
+    d.left({
+      speed: 40,
+      steps: 20
+    });
+  }
+  if (data.indexOf("右") > -1) {
+    console.log("flying backward");
+    d.right({
+      speed: 40,
+      steps: 20
     });
   }
 });
 
 console.log("watching file...");
+
+var quitting = false;
+
+process.on('SIGINT', function() {
+  if (!quitting) {
+    d.land();
+    console.log("press Ctrl + C again to exit");
+    quitting = true;
+  } else {
+    process.exit();
+  }
+});

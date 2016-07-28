@@ -15,6 +15,10 @@ Needs to install OpenCV (and its dependency for it to build and link, such as li
 
 This should pull most of the dependencies and build recursively. Then you will need to run `npm install` to get the nodejs dependencies pulled down as well.
 
+# Swarm Fix
+
+Need to copy [this](https://github.com/virgilvox/node-rolling-spider/blob/master/lib/swarm.js) into node-rolling-spider node_module, in order to control the new Parrot drones.
+
 # References
 
 * [node-ar-drone](https://github.com/felixge/node-ar-drone)
