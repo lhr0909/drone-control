@@ -29,7 +29,7 @@ d.connect(function (connectError) {
   });
 });
 
-var watcher = chokidar.watch('/tmp/wechat_server.txt', {
+var watcher = chokidar.watch('/tmp/drone_server.txt', {
   persistent: true
 });
 
@@ -95,6 +95,23 @@ watcher.on('all', function(event, path) {
     d.right({
       speed: 40,
       steps: 20
+    });
+  }
+  if (data.indexOf("圈") > -1) {
+    console.log("spinning");
+    d.clockwise({
+      speed: 40,
+      steps: 100
+    });
+  }
+  if (data.indexOf("空翻") > -1) {
+    console.log("flipping");
+    d.backFlip(function() {
+      setTimeout(function() {
+        d.land(function() {
+          process.exit(0);
+        });
+      }, 3000);
     });
   }
 });
